@@ -6,17 +6,35 @@ import java.util.Scanner;
 public class Cinema {
     private int rows;
     private int seats;
+    private int totalSeats;
     private boolean big;
+    private int ticketsSold;
+    private int currentIncome;
+
     private char[][] visual;
 
     public Cinema(int rows, int seats) {
         this.rows = rows;
         this.seats = seats;
-        big = rows * seats > 60;
+        totalSeats = rows * seats;
+        big = totalSeats > 60;
+        ticketsSold = 0;
         visual = new char[rows][seats];
         for (char[] row : visual) {
             Arrays.fill(row, 'S');
         }
+    }
+
+    public int getTicketsSold() {
+        return ticketsSold;
+    }
+
+    public int getTotalSeats() {
+        return totalSeats;
+    }
+
+    public int getCurrentIncome() {
+        return currentIncome;
     }
 
     public String getVisual() {
@@ -35,9 +53,9 @@ public class Cinema {
         return sb.toString();
     }
 
-    public int calcIncome() {
+    public int calcTotalIncome() {
         if (!big) {
-            return rows * seats * 10;
+            return totalSeats * 10;
         } else {
             var frontRows = rows / 2;
             var backRows = rows - frontRows;
@@ -45,12 +63,24 @@ public class Cinema {
         }
     }
 
-    public int getSeatPrice(int rowN) {
-        return !big ? 10 : rowN <= rows / 2 ? 10 : 8;
+    private boolean isAvailableSeat(int rowN, int seatN) {
+        if (rowN > rows || seatN > seats) {
+            System.out.println("Wrong input!");
+            return false;
+        }
+        if (visual[rowN - 1][seatN - 1] == 'B') {
+            System.out.println("That ticket has already been purchased!");
+            return false;
+        }
+        return true;
     }
 
-    public void bought(int rowN, int seatN) {
+    public int bought(int rowN, int seatN) {
+        int price = !big ? 10 : rowN <= rows / 2 ? 10 : 8;
         visual[rowN - 1][seatN - 1] = 'B';
+        ticketsSold++;
+        currentIncome += price;
+        return price;
     }
 
     public static void main(String[] args) {
@@ -64,6 +94,7 @@ public class Cinema {
         while (true) {
             System.out.println("1. Show the seats\n" +
                     "2. Buy a ticket\n" +
+                    "3. Statistics\n" +
                     "0. Exit");
             var command = scan.nextInt();
 
@@ -73,12 +104,27 @@ public class Cinema {
                     System.out.println(cinema.getVisual());
                     break;
                 case 2:
-                    System.out.println("Enter a row number:");
-                    var rowN = scan.nextInt();
-                    System.out.println("Enter a seat number in that row:");
-                    var seatN = scan.nextInt();
-                    System.out.printf("Ticket price: $%d\n", cinema.getSeatPrice(rowN));
-                    cinema.bought(rowN, seatN);
+                    while (true) {
+                        System.out.println("Enter a row number:");
+                        var rowN = scan.nextInt();
+                        System.out.println("Enter a seat number in that row:");
+                        var seatN = scan.nextInt();
+
+                        if (cinema.isAvailableSeat(rowN, seatN)) {
+                            System.out.printf("Ticket price: $%d\n", cinema.bought(rowN, seatN));
+                            break;
+                        }
+                    }
+                    break;
+                case 3:
+                    System.out.printf("Number of purchased tickets: %d\n" +
+                            "Percentage: %.2f%%\n" +
+                            "Current income: $%d\n" +
+                            "Total income: $%d\n",
+                            cinema.getTicketsSold(),
+                            cinema.getTicketsSold() / (double) cinema.getTotalSeats() * 100,
+                            cinema.getCurrentIncome(),
+                            cinema.calcTotalIncome());
                     break;
                 case 0:
                     return;

@@ -7,6 +7,7 @@ Your output should be like in the example below and should contain 9 lines.
 
 Example  
 Cinema:  
+<pre>
   1 2 3 4 5 6 7 8  
 1 S S S S S S S S  
 2 S S S S S S S S  
@@ -15,3 +16,4 @@ Cinema:
 5 S S S S S S S S  
 6 S S S S S S S S  
 7 S S S S S S S S
+</pre>

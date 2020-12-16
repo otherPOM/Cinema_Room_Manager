@@ -36,7 +36,7 @@ public class Cinema {
     }
 
     public int calcIncome() {
-        if (big) {
+        if (!big) {
             return rows * seats * 10;
         } else {
             var frontRows = rows / 2;
@@ -59,19 +59,32 @@ public class Cinema {
         var rows = scan.nextInt();
         System.out.println("Enter the number of seats in each row:");
         var seats = scan.nextInt();
-
         var cinema = new Cinema(rows, seats);
-        System.out.println("Cinema:");
-        System.out.println(cinema.getVisual());
-        System.out.println("Enter a row number:");
-        var rowN = scan.nextInt();
-        System.out.println("Enter a seat number in that row:");
-        var seatN = scan.nextInt();
-        System.out.printf("Ticket price: $%d\n", cinema.getSeatPrice(rowN));
-        cinema.bought(rowN, seatN);
-        System.out.println("Cinema:");
-        System.out.println(cinema.getVisual());
 
-//        System.out.printf("Total income:\n$%d", cinema.calcIncome());
+        while (true) {
+            System.out.println("1. Show the seats\n" +
+                    "2. Buy a ticket\n" +
+                    "0. Exit");
+            var command = scan.nextInt();
+
+            switch (command) {
+                case 1:
+                    System.out.println("Cinema:");
+                    System.out.println(cinema.getVisual());
+                    break;
+                case 2:
+                    System.out.println("Enter a row number:");
+                    var rowN = scan.nextInt();
+                    System.out.println("Enter a seat number in that row:");
+                    var seatN = scan.nextInt();
+                    System.out.printf("Ticket price: $%d\n", cinema.getSeatPrice(rowN));
+                    cinema.bought(rowN, seatN);
+                    break;
+                case 0:
+                    return;
+                default:
+                    continue;
+            }
+        }
     }
 }
